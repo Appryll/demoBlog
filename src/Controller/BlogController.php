@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 //use DateTime o puedo usar \antes de DateTime
 
@@ -84,25 +86,82 @@ class BlogController extends AbstractController
 
     /**
      * @Route("/blog/new", name="blog_create")
+     * @Route("/blog/{id}/edit", name="blog_edit"<)
      */
-    public function create(Request $request, EntityManagerInterface $manager) 
-    {
-        dump($request);
 
-        if($request->request->count()>0)
+
+    public function create(Article $article = null, Request $request, EntityManagerInterface $manager) 
+    { 
+        ////de base el articulo esta vacio si no es nulo de base va a haber errores
+        ////article para buscar el id y lo envie en el url
+        // dump($request);
+
+        // if($request->request->count()>0)
+        // {
+            //$article = new Article;
+
+        //     $article->setTitle($request->request->get('title'))
+        //             ->setContent($request->request->get('content'))
+        //             ->setImage($request->request->get('image'))
+        //             ->setCreatedAt(new \DateTime());
+
+        //     $manager->persist($article);
+        //     $manager->flush();
+
+        //     dump($article);
+
+        //     return $this->redirectToRoute('blog_show', [
+        //         'id' => $article->getId()
+        //     ]);
+
+        // }
+
+
+        if(!$article)
         {
             $article = new Article;
-
-            $article->setTitle($request->request->get('title'))
-                    ->setContent($request->request->get('content'))
-                    ->setImage($request->request->get('image'))
-                    ->setCreatedAt(new \DateTime());
-
-            $manager->persist($article);
-            $manager->flush();
-
         }
-        return $this->render('blog/create.html.twig');
+        // $article = new Article;
+        
+        // $article->setTitle("titre à la con"); demuestra que todo lo que ponga en set va a mostrarse en la pag
+        //         ->setContent("titre à la con");
+
+            $form = $this->createFormBuilder($article)  //para crear campos
+
+                // Dar stylo
+                // ->add('title', TextType::class, [
+                //     'attr' => [
+                //         'placeholder' => "Saisir le titre de l'article",
+                //         'class' => "col-md-6 mx-auto"
+                //     ]
+                // ])
+                ->add('title')
+                ->add('image')
+               // ->add('save', SumitType::class) button pero no puedo cambiar el label 
+                ->add('content')
+                ->getForm();
+
+                $form->handleRequest($request);
+
+                if($form->isSubmitted() && $form->isValid())
+                    {
+                        $article->setCreatedAt(new \DateTime);
+
+                        $manager->persist($article);
+                        $manager->flush();
+
+                        dump($article);
+
+                        return $this->redirectToRoute('blog_show', [
+                                   'id' => $article->getId()
+                        ]);
+
+                    }
+
+
+         return $this->render('blog/create.html.twig', [
+             'formArticle'=> $form->createView()
+         ]);
     }
     
 
