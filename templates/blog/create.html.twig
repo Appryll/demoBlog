@@ -4,7 +4,21 @@
 
     <h1 class="display-4 text-center my-4">Créer un nouvel article</h1>
 
-    <form method="post" action="" class="col-md-6 mx-auto">
+    {{ form_start(formArticle, {'attr': {'class': 'col-md-è mx-auto'}}) }}
+
+        {{ form_row(formArticle.title, {'attr': {'placeholder': "Saisir le titre de l'article..."}}) }}
+
+        {{ form_row(formArticle.content, {'attr': {'placeholder': "Contenu de l'article...", "row":15}}) }}
+
+        {{ form_row(formArticle.image, {'attr': {'placeholder': "Saisir de l'image..."}}) }}
+
+        <button  type="submit" class"btn btn-info">Enregistrer</button>
+
+    {{ form_end(formArticle) }}
+
+    {# {{form(formArticle)}} -----Para ver el formulario#}
+
+    {# <form method="post" action="" class="col-md-6 mx-auto">
         <div class="form-group">
             <label for="title">Titre</label>
             <input type="text" class="form-control" id="title" name="title">
@@ -18,7 +32,7 @@
             <input type="text" class="form-control" id="image" name="image">
         </div>
         <button type="submit" class="btn btn-dark">Enregistrer</button>
-    </form>
+    </form> #}
     
 {% endblock %}
 
