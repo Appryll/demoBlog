@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+
+{# extends est une commande TWIG permettant d'hériter d'un template en particulier, ici dans notre cas de notre gabarit de base 'base.html.twig' (header + footer + liens css etc...) #}
+
+{# block est une commande de TWIG permettant de faire appel à un block d'un template hérité. Ici nous faisons appel au block 'body' du template 'base.html.twig' #}
+{% block body %}
+    
+    <h1>{{ title }}</h1>
+    {# title est une variable TWIG qui provient du controller 'BlogController' et de la méthode 'home()' #}
+    {# {{}} --> double accolades, ce que l'on appel une interpolation #}
+    {# {%%} appel une commande de twig #}
+
+    {# TWIG est un langage de rendu. Simplicité du langage, facilite l'écriture des affichages, beaucoup de fonctionnalités #}
+    {# Absence de PHP au sein de nos affichages, permet d'abstraire les affichages des balises PHP #}
+    {# Plus simple pour un intégrateur #}
+
+    {# age est une variable TWIG qui provient du controller 'BlogController' et de la méthode 'home()' #}
+    {# if 25 > 18 #}
+    {% if age > 18 %}
+
+        <p>Vous êtes majeur</p>
+
+    {% else %}
+
+        <p>Vous êtes mineurs</p>
+
+    {% endif %}
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur porta varius rhoncus. Aenean nec dolor ac leo blandit pulvinar in sed nibh. In mattis augue quis ligula commodo, ac tempus neque ullamcorper. Sed dapibus tortor vel libero rutrum ornare. Vestibulum luctus gravida metus, vel congue erat varius non. Fusce tempor sodales mi, ornare vehicula tortor molestie eget. Cras egestas libero vitae metus condimentum, sed porttitor orci dapibus. Nunc vel volutpat turpis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut non suscipit est. In porttitor ac libero nec pellentesque.</p>
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur porta varius rhoncus. Aenean nec dolor ac leo blandit pulvinar in sed nibh. In mattis augue quis ligula commodo, ac tempus neque ullamcorper. Sed dapibus tortor vel libero rutrum ornare. Vestibulum luctus gravida metus, vel congue erat varius non. Fusce tempor sodales mi, ornare vehicula tortor molestie eget. Cras egestas libero vitae metus condimentum, sed porttitor orci dapibus. Nunc vel volutpat turpis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut non suscipit est. In porttitor ac libero nec pellentesque.</p>
+
+{% endblock %}

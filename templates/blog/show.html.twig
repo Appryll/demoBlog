@@ -1,0 +1,25 @@
+{% extends "base.html.twig" %}
+{# On hérite du template 'base.html.twig' #}
+
+{# On appel le block body du template 'base.html.twig' #}
+{% block body %}
+
+    <h1 class="display-4 my-4 text-center">Détails de l'article</h1>
+
+    {# 'article' est une variable TWIG qui provient du contrller 'blogController' et de la méthode 'show' ($this->render(['article'])) #}
+    {# la variable 'article' contient le detail de l'article selectionné en BDD #}
+    {# Pas besoin de boucle FOR puisque nous n'avons qu'un seul article selectioné, donc une seule ligne selectionné dans la table SQL Article #}
+
+    <div class="text-center col-md-12 card mb-2 p-0">
+        {# replace() : filtre TWIG qui permet de remplacer une partie de la chaine de caractère par une autre, dans notre on remplace la largeur de 200 dans l'URL de l'image par "1000/300" #}
+        <img src="{{ article.image|replace({"200": "1000/300"}) }}" class="card-img-top" alt="{{ article.title }}">
+        <div class="card-body">
+            <h5 class="card-title text-center"> {{ article.title }} </h5>
+            <p class="">{{ article.content|raw }}</p>
+            <hr>
+            <p class="font-italic text-right">Posté le {{ article.createdAt|date("d/m/Y") }} à {{ article.createdAt|date("H:i:s") }}</p>
+        </div>
+    </div>
+    
+{% endblock %}
+
