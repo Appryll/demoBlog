@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-
+use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 //use DateTime o puedo usar \antes de DateTime
 
 class BlogController extends AbstractController
@@ -86,19 +88,33 @@ class BlogController extends AbstractController
 
     /**
      * @Route("/blog/new", name="blog_create")
-     * @Route("/blog/{id}/edit", name="blog_edit"<)
-     */
+     * @Route("/blog/{id}/edit", name="blog_edit")
+     */                             // 12
+    public function form(Article $article = null, Request $request, EntityManagerInterface $manager)
+    {
+        /* de base el articulo esta vacio si no es nulo de base va a haber errores
+            article para buscar el id y lo envie en el url
+            
+            La classe Request est une classe prédéfinie en Symfony qui stocke toute les données véhiculées par les superglobales ($_POST, $_COOKIE, $_SERVER etc...)
+            Nous avons accès aux données saisie dans le formulaire via l'objet $request
+            La propriété '$request->request' représente la superglobale $_POST, les données saisies dans le formulaire sont accesssible via cette proprité
+            Pour insérer un nouvel article, nous devons instancier la classe / Entitée Article pour avoir un objet Article vide, afin de renseigner tous les setteurs de l'objet $article
 
+            EntityManagerInterface est une interface prédéfinie en Symfony qui permet de manipuler les lignes de la BDD (INSET, UPDATE, DELETE). Elle possède des méthodes permettant de péparer et d'executer les requetes SQL (persist() | flush())
 
-    public function create(Article $article = null, Request $request, EntityManagerInterface $manager) 
-    { 
-        ////de base el articulo esta vacio si no es nulo de base va a haber errores
-        ////article para buscar el id y lo envie en el url
+            persist() est une méthode issue de l'interface EntityManagerInterface qui pemret de préparer et sticker la requete SQL
+            flush() est une méthode issue de l'interface EntityManagerInterface qui permet de libérer et d'executer la requete SQL
+
+            redirectToRoute() est une méthode prédéfinie en Symfony qui permet de rediriger vers une route spécifique, dans notre cas on redirige après insertion vers la route 'blog_show' (détail de l'article que l'on vient d'insérer) et on transmet à la méthode l'id de l'article a envoyer dans l'URL
+
+            get() : méthode de l'objet $request qui permet de récupérer les données saisie aux différents indices 'name' du formulaire
+        */  
+
         // dump($request);
 
-        // if($request->request->count()>0)
+        // if($request->request->count() > 0)
         // {
-            //$article = new Article;
+        //     $article = new Article;
 
         //     $article->setTitle($request->request->get('title'))
         //             ->setContent($request->request->get('content'))
@@ -113,55 +129,70 @@ class BlogController extends AbstractController
         //     return $this->redirectToRoute('blog_show', [
         //         'id' => $article->getId()
         //     ]);
-
         // }
 
+        /*
+            ->add('title', TextType::class, [
+                    'attr' => [
+                        'placeholder' => "Saisir le titre de l'article",
+                        'class' => "col-md-6 mx-auto"
+                    ]
+                ])
+
+                $article->setTitle("Titre à  la con")
+                        ->setContent("Contenu à la con");
+        */
+        //Si l'article n' est pas existant, n'est pas dèfinit, qu'il es NuLL, cela veut dire qu' aucun ID n' a été trans,i dans ll' URL,
+        // donce c'est une insertion, alors on instanie la classe Article afin d' avoir un objet vide.
+        //on entre dans la condition suelement dans le cas d' une insertion d' un article
 
         if(!$article)
         {
             $article = new Article;
         }
-        // $article = new Article;
         
-        // $article->setTitle("titre à la con"); demuestra que todo lo que ponga en set va a mostrarse en la pag
-        //         ->setContent("titre à la con");
+        // $form = $this->createFormBuilder($article) /*/para crear campos*/
+        //              ->add('title')
+        //              ->add('content')
+        //              ->add('image')
+        //              /*->add('save', SumitType::class) button pero no puedo cambiar el label */
+        //              ->getForm();
 
-            $form = $this->createFormBuilder($article)  //para crear campos
+         //On importe  la classe permettant de créer le formulaire d'ajout / modification d'article (ArticleType)
+        //On envoi en 2éme argument l'objet $article pour bien spécifier que le formulaire est destiné à remplir l'objet $article
+        $form = $this->createForm(ArticleType::class, $article);
 
-                // Dar stylo
-                // ->add('title', TextType::class, [
-                //     'attr' => [
-                //         'placeholder' => "Saisir le titre de l'article",
-                //         'class' => "col-md-6 mx-auto"
-                //     ]
-                // ])
-                ->add('title')
-                ->add('image')
-               // ->add('save', SumitType::class) button pero no puedo cambiar el label 
-                ->add('content')
-                ->getForm();
+        //La méthode handleRequest() permet de récupérer toutes les valeurs du formulaire contenu dans $request ($_POST) afin de les 
+        // directement dans less setteurs de l'objets $article
+        $form->handleRequest($request);
 
-                $form->handleRequest($request);
-
-                if($form->isSubmitted() && $form->isValid())
-                    {
-                        $article->setCreatedAt(new \DateTime);
-
-                        $manager->persist($article);
-                        $manager->flush();
-
-                        dump($article);
-
-                        return $this->redirectToRoute('blog_show', [
-                                   'id' => $article->getId()
-                        ]);
-
-                    }
+        // Si le formulaire q bien été soumis, que l'on a cliqué sur la bouton de validation 'sublit' et que tout est bien validé, c'est à 
+        // dire que chaque valeur du formulaire q bien été envoyé dans les bons setteurs, alors on entre dans la condition IF
+ 
+        if($form->isSubmitted() && $form->isValid())
+        {
 
 
-         return $this->render('blog/create.html.twig', [
-             'formArticle'=> $form->createView()
-         ]);
+            
+            if(!$article->getId())
+            { 
+                $article->setCreatedAt(new \DateTime);
+            }
+
+            $manager->persist($article);
+            $manager->flush();
+
+            dump($article);
+
+            return $this->redirectToRoute('blog_show', [
+                'id' => $article->getId()
+            ]);
+        }
+
+        return $this->render('blog/create.html.twig', [
+            'formArticle' => $form->createView(),
+            'editMode' => $article-> getId() !== null
+        ]);
     }
     
 
