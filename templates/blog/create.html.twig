@@ -2,21 +2,53 @@
 
 {% block body %}
 
-    <h1 class="display-4 text-center my-4">Créer un nouvel article</h1>
+    {# editMode : variable TWiG  qui provient du controller 'BlogController' de lq méthode 'form()', elle per,et de savoir si un article
+    posséde un ID o non, celq per,et de gérer l'qffichage en fonction de l'article (ajout/modification) #}
 
-    {{ form_start(formArticle, {'attr': {'class': 'col-md-è mx-auto'}}) }}
+    {# si la condition IF renvoir TRUE, cela veut dire que l'article posséde un ID, alors c'est une modificqrion
+    Sinon dans tout les autres cas, l'article n' a pas d' ID, alors c'est une insertion #}
+
+    <h1 class="display-4 text-center my-4">
+
+    {% if editMode %}
+        Modification de l'article
+
+    {% else  %}
+        Créer un nouvel article
+
+    {% endif  %}
+    
+    
+    </h1>
+
+    {# form_start() fonction de TWIG permettant de commencer le formulaire, de générer la balise <form> ouvrante, Symfony intègre automatiquement l'attribut 'method="post"' #}
+    {# form_end() fonction de TWIG permettant de terminer le formulaire, de générer la balise </form> fermante #}
+    {# form_row() fonction TWIG qui permet d'afficher les champs du formulaire 1 par 1 #}
+    {# Le bouton submit est codé en dur puisque le formulaire servira à la fois et à insérer mais aussi à modifier #}
+    {# SI on crée la bouton avec la fonction add() dans le controller, il sera difficile de modifier son lable (modifier ou supprimer) #}
+
+    {{ form_start(formArticle, {'attr': {'class': 'col-md-7 mx-auto'}}) }}
 
         {{ form_row(formArticle.title, {'attr': {'placeholder': "Saisir le titre de l'article..."}}) }}
 
-        {{ form_row(formArticle.content, {'attr': {'placeholder': "Contenu de l'article...", "row":15}}) }}
+        {{ form_row(formArticle.content, {'attr': {'placeholder': "Contenu de l'article...", "rows": 15}}) }}
 
-        {{ form_row(formArticle.image, {'attr': {'placeholder': "Saisir de l'image..."}}) }}
+        {{ form_row(formArticle.image, {'attr': {'placeholder': "Saisir l'URL de l'image..."}}) }}
 
-        <button  type="submit" class"btn btn-info">Enregistrer</button>
+        <button type="submit" class="btn btn-info">
+         {% if editMode %}
+        Enregistrer les modifications
+
+        {% else  %}
+        Enregistrer
+
+        {% endif  %}
+        </button>
 
     {{ form_end(formArticle) }}
 
-    {# {{form(formArticle)}} -----Para ver el formulario#}
+
+    {# {{ form(formArticle) }} #}
 
     {# <form method="post" action="" class="col-md-6 mx-auto">
         <div class="form-group">

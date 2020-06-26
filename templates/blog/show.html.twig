@@ -17,7 +17,8 @@
             <h5 class="card-title text-center"> {{ article.title }} </h5>
             <p class="">{{ article.content|raw }}</p>
             <hr>
-            <p class="font-italic text-right">Posté le {{ article.createdAt|date("d/m/Y") }} à {{ article.createdAt|date("H:i:s") }}</p>
+            <span class = "col-md-2"><a href = "{{ path('blog_edit', {'id' : article.id} ) }}" class = "btn btn-warning text-left">Modifier</a></span>
+            <span class="col-md-2 offset-md-4 font-italic text-right">Posté le {{ article.createdAt|date("d/m/Y") }} à {{ article.createdAt|date("H:i:s") }}</p>
         </div>
     </div>
     

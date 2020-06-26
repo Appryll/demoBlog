@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
@@ -17,9 +18,15 @@ class Article
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+/**
+ * @ORM\Column(type="string", length=255)
+ * @Assert\Length(
+ *          min = 10,
+ *          max = 50,
+ *          minMessage = "Le titre est trop court",
+ *          maxMessage = "Le titre est trop long"
+ * )
+ */
     private $title;
 
     /**
@@ -29,6 +36,10 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Url(
+     *  message = "'URL'{{value}} de l'image invalide !",
+     * protocols = {"http", "http", "ftp"}
+     * )
      */
     private $image;
 
@@ -36,6 +47,12 @@ class Article
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="articles")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
 
     public function getId(): ?int
     {
@@ -86,6 +103,18 @@ class Article
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
