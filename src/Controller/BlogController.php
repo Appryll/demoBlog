@@ -173,14 +173,14 @@ class BlogController extends AbstractController
         {
 
 
-            
+            // on entre dqns lq condition seule,ent dans la 
             if(!$article->getId())
             { 
                 $article->setCreatedAt(new \DateTime);
             }
 
-            $manager->persist($article);
-            $manager->flush();
+            $manager->persist($article); //on prepare l'insertion
+            $manager->flush(); // on excecute l' insertion
 
             dump($article);
 
@@ -191,7 +191,8 @@ class BlogController extends AbstractController
 
         return $this->render('blog/create.html.twig', [
             'formArticle' => $form->createView(),
-            'editMode' => $article-> getId() !== null
+            'editMode' => $article-> getId() !== null // on test si l'article posséde un ID ou non, si l'article posséde un ID  c'est une
+            // modificqtion, si il n' a pas de ID c' est une insertion
         ]);
     }
     
