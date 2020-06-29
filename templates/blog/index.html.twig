@@ -22,10 +22,12 @@
                 {# nous piochons dans notre variable data avec le point '.' afin d'afficher l'image, le titre, le contenu et la date de l'article #}
                 <div class="card-body">
                     <h5 class="card-title">{{ data.title }}</h5>
-                    <p class="card-text">{{ data.content|raw }}</p>
+                    <p class="card-text">{{ data.content|slice(0, 100)|raw }}...</p>
+                    {# slice() filtre TWIG qui#}
                     {# raw : filtre TWIG qui permet d'echapper les balises HTML stockées en BDD <p></p> et d'afficher le texte brut #}
                     <hr>
-                    <p>Posté le {{ data.createdAt|date("d/m/Y") }} à {{ data.createdAt|date("H:i:s") }}</p>
+                    <p>Posté le {{ data.createdAt|date("d/m/Y") }} à {{ data.createdAt|date("H:i:s") }} dans la catégorie <strong>{{data.
+                    category.title}}</strong></p>
 
                     {# La date est renvoyée par la BDD sous form d'objet DateTime, donc il n'est pas possible de l'afficher comme ceci : data.createdAt, un objet ne peut être convertit en une chaine de caractère #}
                     {# Nous devons pour cela utiliser un filtre TWIG #}
