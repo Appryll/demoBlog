@@ -18,8 +18,31 @@
             <p class="">{{ article.content|raw }}</p>
             <hr>
             <span class = "col-md-2"><a href = "{{ path('blog_edit', {'id' : article.id} ) }}" class = "btn btn-warning text-left">Modifier</a></span>
-            <span class="col-md-2 offset-md-4 font-italic text-right">Posté le {{ article.createdAt|date("d/m/Y") }} à {{ article.createdAt|date("H:i:s") }}</p>
+            <span class="col-md-2 offset-md-4 font-italic text-right">Posté le {{ article.
+            createdAt|date("d/m/Y") }} à {{ article.createdAt|date("H:i:s") }} dans la catégorie <strong>{{ article.category.title}}</strong></p>
         </div>
+
+    </div>
+
+    <div class="col-md-12"
+
+        <h2 class="text-center mt-5">Derniers avis...</h2>
+
+        {% for comment in article.comments %}
+
+        <div class= "row border rounded mb-2 bg-dark text-white">
+            <div class = "col-md-2">
+                <span>{{ comment.author }}</span>
+                <small class= "font-italic"> ( {{ comment.createdAt|date('d/m/Y à H:i:s') }} )</small>
+            </div>
+
+            <div class="col-md-10">
+                <p>{{ comment.content|raw }}</p>
+            </div>
+        </div>
+
+        {% endfor %}
+
     </div>
     
 {% endblock %}
