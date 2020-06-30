@@ -2,13 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(
+ *      fields = {"email"}, 
+ *      message = "Un compte est déjà existant à cette adresse Email !"
+ *)
  */
-class User
+class User Implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -19,6 +26,9 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email(
+     *      message= "Cette adresse Email '{{ value}}' n'est pas valide."
+     * )
      */
     private $email;
 
@@ -29,9 +39,15 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min="8", minMessage="Votre mot de passe doit contenir 8 caractéres minimum")
+     * @Assert\EqualTo(propertyPath="confirm_password", message="Les mots de passe ne correspondent pas")
      */
     private $password;
 
+
+    /**
+     * @Assert\EqualTo(propertyPath="password", message="Les mots de passe ne correspondent pas")
+     */
     public $confirm_password;
 
     public function getId(): ?int
@@ -74,4 +90,27 @@ class User
 
         return $this;
     }
+
+    // Pour pouvoir encoder le mot de passe, il faut que notre Entité User Implè=émente l'interfqce UserInterface
+    // Cette interface contient des ,ethodes aue nous sommes obligé de déclarer;
+    // getPassword(), getUsername(), getRoles(), getDalt() et eraseCredentials()
+
+    // cette méthode est uniquemente déstinée à nettoyer les mots de passe en texte brut éventuallement stocké
+    public function eraseCredentials()
+    {
+        
+    }
+
+    // renvoie la chaine de caractéres non encodée aue l'utilisateur a saisi, qui a été utilisé à l'origine pour encoder le mote de passe
+    public function getSalt()
+    {
+        
+    }
+
+    //cette méthode renvoi un tableau de chaine de caractéres où sont stockés les roles accordés à l'utilisateur
+    public function getRoles()
+    {
+        return ['ROLE_USER'];
+    }
+
 }
