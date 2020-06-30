@@ -1,15 +1,46 @@
 security:
+    # declaration de l' encodeur, on précise à Symfony que nous allons encoder un paramètre dans la classe / Entité  Usér (password)
+    # on precise le type d' econdage (bcrypt)
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+
+
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users_in_memory: { memory: null }
+
+        # on indique à sSymfony où sont stocké les données de l'utilisqteur, en BDD (in_database), de quelle entité (App\Entity\User) 
+        # et quelles propiété il va devoir controler (email)
+        in_database:
+            entity:
+                class: App\Entity\User
+                property: email
+    # firewalls: quell pqrtie du site nous allons proteger et par quel moyen
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        # main: tout le ocntenu du site
         main:
             anonymous: true
             lazy: true
-            provider: users_in_memory
+
+            # le firewall 'main', le contenu du site sera potégé avec les donnéses stockées en BDD dans la tqble User (provider defini ici-dessus)
+            provider: in_database
+
+            # on indique à Symfony que le site esto portégé pqr un systeme de formulaire de connexion (form_login)
+            form_login: 
+                # login_path permet d' indiquer à Symfony sur quelle route se trouve le formulaire de connexion
+                login_path: security_login
+                # check_path permet d' indiquer à Symfony sur quelle route il doit controler les données soisie dans le formulaire de connexion
+                check_path: security_login
+
+            # on indique la route permettant de se deconnecter
+            logout:
+                path: security_logout
+                target: blog
+                # un fois deconnecter, celq redirige automatiquement cers la page des articles
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
