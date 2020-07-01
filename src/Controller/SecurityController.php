@@ -6,8 +6,10 @@ use App\Entity\User;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class SecurityController extends AbstractController
@@ -40,6 +42,13 @@ class SecurityController extends AbstractController
 
             //on transmet le MDP encodé qu setteur de l'objet User
             $user->setPassword($hash);
+
+
+            // on affecte un ROLE_USER pour chaque nouvelle isncription sur le blog
+            // ROLE_USER: l'internaute q qccés à tout le contenu du site, publier modifier articles mais il n' a pas accés 
+            // à la partie backOffice
+            $user->setRoles(["ROLES_USER"]);
+
             $manager->persist($user);
             $manager->flush();
 
@@ -56,9 +65,20 @@ class SecurityController extends AbstractController
     /**
      *@Route("/connexion", name="security_login")
      */
-    public function login()
-    {
-        return $this->render('security/login.html.twig');
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    
+    {   
+        // renvoi le message d'erreur en cas de mauvaise connexion, c'est l'internaute a saissis des identifiants incorrect au moment de
+        // la connexion
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // permet de recuperer le dernier username (email) que l'internaute a saise dans le formulaire de connexion en cas d' erreur de connexion
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('security/login.html.twig', [
+            'last_username'=> $lastUsername, // on envoi le message d'erreur et le dernier email saisie sur le template
+            'error' =>$error
+        ]);
     }
     
 

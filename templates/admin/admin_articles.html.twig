@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BACKOFFICE | Gestion des articles{% endblock %}
+
+{% block body %}
+
+<h1 class="display-4 text-center my-4">GESTION DES ARTICLES</h1>
+
+    <table class="table table-bordered text-center">
+
+    <tr>
+
+    {# on boucle sur les colonnes recupérer en BDD et envoy par le controller 'AdminController'
+    'colonnes' -> variables contenant les nions des colonnes de table ' Article'qui provient dy controller 'AdminControler'
+    'data' reeptionne une colonne par tour de boucle FOR #}
+    {% for data in colonnes %}
+
+        {% if data != 'id' %}
+
+            <th>{{ data }}</th>
+
+        {% endif %}
+
+    {% endfor %}
+            <th>Catégorie</th>
+            <th>Edit</th>
+            <th>Supp</th>
+
+    </tr>
+
+        {% for data in articles %}
+
+            <tr>
+                <td> {{ data.title }} </td>
+                <td> {{ data.content|raw}} </td>
+                <td><img src="{{ data.image }}" alt="{{ data.title }}" style="width: 150px;"></td>
+                <td> {{ data.createdAt| date("d/m/Y à H:i:s") }} </td>
+                <td> {{ data.category.title }} </td>
+                <td><a href="{{ path('admin_edit_article',{'id': data.id} ) }}" class="btn btn-dark"><i class="fas fa-pencil-alt"></i></a></td>
+                <td><a href="" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a></td>
+                
+            </tr>
+
+        {% endfor %}
+
+    </table>
+
+
+{% endblock %}
