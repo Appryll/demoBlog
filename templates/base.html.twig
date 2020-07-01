@@ -10,7 +10,9 @@
 
             <link rel="stylesheet" href="{{ asset('css/style.css') }}">
             {# asset() : fonction TWIG qui pointe sur le dossier 'public' et permettant de générer une URL jusqu'au fichier style.css #}
-        
+
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
         {% endblock %}
     </head>
     <body>
@@ -27,21 +29,49 @@
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ path('blog') }}">Articles</a>
-                        {# path() : fonction TWIG permettant de générer une URL en fonction du nom de la route envoyer en argument. ex path('blog') --> URL '/blog' #}
-                        {# Le nom de la route 'blog' est déclarée dans le controller 'BlogController' et est rattaché à la méthode 'index()' (@Route('/blog', name='blog')) #}
+
+                        {# path() : fonction TWIG permettant de générer une URL en fonction du nom de la route envoyer en argument.
+                         ex path('blog') --> URL '/blog' #}
+                        {# Le nom de la route 'blog' est déclarée dans le controller 'BlogController' et est rattaché à la méthode 
+                        'index()' (@Route('/blog', name='blog')) #}
                     </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ path('blog_create') }}">Créer un article</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ path('security_registration') }}">Créer votre compte</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ path('security_login') }}">Idientifiez-vous</a>
-                    </li>
+
+
+                    {# app.user permet de sticker les information de l' internaute qui est connecté, c'est à dire les infomations de la 
+                    sesion en cours
+                    si user.app renvoi true, cela veut dire aue l' internaute est bien connecté, alors on entre dans le IF #}
+                    {# si l' internaute est connecté  peut Créer un article #}
+                    {% if app.user %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ path('blog_create') }}">Créer un article</a>
+                        </li>
+                    {% endif %}
+
+
+                    {# si l'internaute n' est pas connecté, on lui propose les liens 'Créer votre compte' et 'Idientifiez-vous' #}
+                    {% if not app.user %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ path('security_registration') }}">Créer votre compte</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ path('security_login') }}">Idientifiez-vous</a>
+                        </li>
+                    {% endif %}
+
+                    {# si l'utilisateur a un ROLE_ADMIN en BDD, alors on netre dans le IF donne qccés au backoffice a l'administrateur #}
+                     {% if is_granted ('ROLE_ADMIN') %}
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{{ path('admin') }}">BACKOFFICE</a>
+                        </li>
+                    {% endif %}
+
+                     {% if app.user %}
+                        <button class="btn btn-sm btn-outline-success my-2 my-sm-0" type="button">
+                            <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
+                        </button>
+                    {% endif %}
                     
-                    <boutton btn btn-light><a class="nav-link" href="{{ path('security_logout') }}">Deconnexion</a></boutton>
-                
+                    
                     {# <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown04">
@@ -54,7 +84,9 @@
             </div>
         </nav>
 
-        {{ dump(app.user) }}
+
+
+        {# {{ dump(app.user) }} permite ver el estado de la coneccion#}
 
         <section class="container mon-conteneur">
         {% block body %}

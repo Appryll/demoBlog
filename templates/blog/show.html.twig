@@ -17,6 +17,14 @@
             <h5 class="card-title text-center"> {{ article.title }} </h5>
             <p class="">{{ article.content|raw }}</p>
             <hr>
+
+            {# SI l'internaute EST connecté, il peut modifier l'article #}
+                {% if app.user %}
+
+                <span class="col-md-2"><a href="{{ path('blog_edit', {'id': article.id }) }}" class="text-left btn btn-warning">Modifier</a></span>
+
+                {% endif %}
+
             <span class = "col-md-2"><a href = "{{ path('blog_edit', {'id' : article.id} ) }}" class = "btn btn-warning text-left">Modifier</a></span>
             <span class="col-md-2 offset-md-4 font-italic text-right">Posté le {{ article.
             createdAt|date("d/m/Y") }} à {{ article.createdAt|date("H:i:s") }} dans la catégorie <strong>{{ article.category.title}}</strong></p>

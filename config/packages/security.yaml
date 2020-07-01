@@ -50,6 +50,9 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+
+    # on indique à Symfony que seulement les ROLE_ADMIN ont acces à cette route '/admin'
+    # on indique aussi à Symfony que les utilisateurs qui se connectent au blog ont un ROLE_USER en BDD
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/profile, roles: ROLE_USER }
